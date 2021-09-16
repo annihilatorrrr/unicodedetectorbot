@@ -98,28 +98,27 @@ async def power(_, m: Message):
         return await m.reply_text("This command works only on supergroups.")
 
     permissions = await member_permissions(int(m.chat.id), int(m.from_user.id))
-    if "can_restrict_members" and "can_change_info" not in permissions:
+    if "can_change_info" not in permissions:
         return await m.reply_text("You don't have enough permissions!")
     args = m.text.split()
     status = REDIS.get(f"Chat_{m.chat.id}")
 
-    if len(args) >= 2:
-        option = args[1].lower()
-        if option in ("yes", "on", "true"):
-            REDIS.set(f"Chat_{m.chat.id}", str("True"))
-            await m.reply_text(
-                "Turned on.",
-                quote=True,
-            )
-        elif option in ("no", "off", "false"):
-            REDIS.set(f"Chat_{m.chat.id}", str("False"))
-            await m.reply_text(
-                "Turned off.",
-                quote=True,
-            )
-    else:
+    if len(args) < 2:
         return await m.reply_text(
             f"This group's current setting is: `{status}`\nTry with on and off to toggle!"
+        )
+    option = args[1].lower()
+    if option in ("yes", "on", "true"):
+        REDIS.set(f"Chat_{m.chat.id}", str("True"))
+        await m.reply_text(
+            "Turned on.",
+            quote=True,
+        )
+    elif option in ("no", "off", "false"):
+        REDIS.set(f"Chat_{m.chat.id}", str("False"))
+        await m.reply_text(
+            "Turned off.",
+            quote=True,
         )
     return
 

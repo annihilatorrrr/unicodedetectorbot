@@ -15,4 +15,4 @@ else:
     BOT_USERNAME = str(environ.get("BOT_USERNAME", "sex"))  # without @
     BOT_TOKEN = str(environ.get("BOT_TOKEN",
                                 "123456789:ertyuioghjtrytr"))  # token
-    REDIS_URL = str(environ.get("REDIS_URL", ""))  # redis db for storage
+    REDIS_URL = str(environ.get("REDISCLOUD_URL", ""))  # redis db for storage

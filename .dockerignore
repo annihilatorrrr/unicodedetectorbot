@@ -1,0 +1,13 @@
+*.yaml
+*.yml
+*.md
+*.toml
+*.txt
+Dockerfile
+*.json
+*.gitignore
+*.dockerignore
+LICENCE
+__pycache__/
+*.session
+*.session-journal

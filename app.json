@@ -7,7 +7,7 @@
           "bot",
           "telegram-bot",
           "pyrogram"
-      ],   
+      ],
    "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
    "logo": "https://telegra.ph/file/5994968fa532cbc6edf32.jpg",
      "addons": [
@@ -18,8 +18,9 @@
    "buildpacks": [
     {
       "url": "heroku/python"
-    }     
+    }
   ],
+  "stack": "container",
   "env": {
       "BOT_TOKEN": {
          "description": "Your bot token. Get one from @BotFather duh",
@@ -35,7 +36,7 @@
          "description": "Get API_HASH from my.telegram.org.",
          "required": true,
          "value": ""
-      },    
+      },
       "BOT_USERNAME": {
          "description": "Your bot username without @",
          "required": true,

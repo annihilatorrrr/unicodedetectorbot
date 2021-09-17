@@ -8,6 +8,9 @@
     "telegram-bot",
     "pyrogram"
     ],
+    {
+      "plan": "rediscloud:30"
+    }
     "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
     "stack": "container",
     "env": {

@@ -15,11 +15,6 @@
       "plan": "rediscloud:30"
     }
   ],
-   "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
-  ],
   "stack": "container",
   "env": {
       "BOT_TOKEN": {

@@ -9,9 +9,9 @@
         "pyrogram",
     ],
     "addons": [
-          {
-              "plan": "rediscloud:30",
-          }
+        {
+            "plan": "rediscloud:30",
+        }
     ],
     "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
     "env": {
@@ -28,7 +28,7 @@
             "required": true
         },
         "HERUKO": {
-            "description": "yes ?",
+            "description": "True or False ?",
             "required": false
         },
         "BOT_USERNAME": {
@@ -36,4 +36,4 @@
             "required": true
         }
     }
-}
+},

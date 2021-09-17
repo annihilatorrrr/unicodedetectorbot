@@ -39,7 +39,7 @@
       "BOT_USERNAME": {
          "description": "Your bot username without @",
          "required": true,
-         "value": "@hostname"
+         "value": "hostname"
       },
       "HERUKO": {
       "description": "True or False ?",

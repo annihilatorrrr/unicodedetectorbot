@@ -10,7 +10,7 @@ COPY requirements.txt .
 RUN pip3 install --no-cache-dir -U -r requirements.txt
 
 # Copying All Source
-COPY detector.py .
+COPY detector.py ..
 
 # Starting Bot
-CMD ["python3.9", "detector.py"]
+CMD ["python3.9", "./detector/detector.py"]

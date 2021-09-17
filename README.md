@@ -3,17 +3,17 @@
 </h1>
 Detects unicode names members in a tg chat & provides a option to take action on that user !
 
+Public bot: [@scarletwitchprobot](https://telegram.me/scarletwitchprobot)
+
 # Run:
 Supports heruko:
 give a star to this repo and fork it then,
-
 Click on :
 
 <a href="https://heroku.com/deploy?template=https://github.com/annihilatorrrr/unicodedetectorbot">
             <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
         </a>
 
-after this get a redis db from heruko or somewhere else.
 and start the dynos !
 
 Other way:

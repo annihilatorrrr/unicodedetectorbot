@@ -6,7 +6,6 @@ Procfile
 *.txt
 LICENCE
 *.md
-*.txt
 *.toml
 *.gitignore
 *.dockerignore

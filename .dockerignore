@@ -2,7 +2,7 @@
 *.yml
 *.md
 *.toml
-*.txt
+runtime.txt
 Dockerfile
 *.json
 *.gitignore

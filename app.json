@@ -14,7 +14,6 @@
           }
     ],
     "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
-    "stack": "container",
     "env": {
         "BOT_TOKEN": {
             "description": "Obtain a Telegram bot token by contacting @BotFather",

@@ -23,10 +23,6 @@
             "description": "API_HASH of your Telegram Account my.telegram.org/apps",
             "required": true
         },
-        "REDIS_URL": {
-            "description": "Need for bot db",
-            "required": true
-        },
         "HERUKO": {
             "description": "yes ?",
             "required": false

@@ -1,1 +1,1 @@
-worker: python detector.py
+worker: python3.9 detector.py

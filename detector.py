@@ -1,4 +1,3 @@
-print("Starting ...")
 from asyncio import sleep
 from logging import INFO, basicConfig, getLogger
 from re import search
@@ -17,6 +16,8 @@ from pyrogram.types import (
 from redis import StrictRedis
 
 from config import *
+
+print("Starting ...")
 
 basicConfig(
     format="%(asctime)s - [UNICODE-DETECTOR] - %(levelname)s - %(message)s",
@@ -320,8 +321,11 @@ async def wlcmtriggered(c: Client, m: Message):
         return
     for member in m.new_chat_members:
         if member.id == BOT_ID:
-            return await c.send_message(int(m.chat.id), "Thanks for adding me! \
-            Now promote me with ban user permissions and toggle /detector !")
+            return await c.send_message(
+                int(m.chat.id),
+                "Thanks for adding me! \
+            Now promote me with ban user permissions and toggle /detector !",
+            )
         x = await c.get_users(int(member.id))
         user_has = ""
         try:
@@ -336,7 +340,8 @@ async def wlcmtriggered(c: Client, m: Message):
         if who.status in ["creator", "administrator"]:
             return
         if not user_has:
-            await c.send_message(int(m.chat.id), "User detected without a name!!")
+            await c.send_message(int(m.chat.id),
+                                 "User detected without a name!!")
             return await sleep(3)
 
         what = await check_string(str(user_has))
@@ -368,10 +373,13 @@ async def wlcmtriggered(c: Client, m: Message):
         TAG = "\u200b"
         for admin in admin_data:
             if not admin.user.is_bot:
-                ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
+                ADMINS_TAG = ADMINS_TAG + \
+                    f"[{TAG}](tg://user?id={admin.user.id})"
         ADMINS_TAG += "Unicode user detected !!"
         if what:
-            await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
+            await c.send_message(int(m.chat.id),
+                                 ADMINS_TAG,
+                                 reply_markup=keyboard)
         return await sleep(3)
 
 

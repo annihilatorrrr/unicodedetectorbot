@@ -5,6 +5,8 @@ Detects unicode names members in a tg chat & provides a option to take action on
 
 Public bot: [@scarletwitchprobot](https://telegram.me/scarletwitchprobot)
 
+Support or any doubts at : [@memerschatgroup](https://telegram.me/memerschatgroup)
+
 # Run:
 Supports heruko:
 give a star to this repo and fork it then,

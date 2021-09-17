@@ -1,39 +1,50 @@
 {
-    "name": "unicodedetectorbot",
-    "description": "A unicode mess named users detector Bot Written In Python Using Pyrogram.",
-    "keywords": [
-        "python3",
-        "telegram",
-        "bot",
-        "telegram-bot",
-        "pyrogram"
-    ],
-    "addons": [
-        {
-            "plan": "rediscloud:30",
-        }
-    ],
-    "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
-    "env": {
-        "BOT_TOKEN": {
-            "description": "Obtain a Telegram bot token by contacting @BotFather",
-            "required": true
-        },
-        "API_ID": {
-            "description": "API_ID of your Telegram Account my.telegram.org/apps",
-            "required": true
-        },
-        "API_HASH": {
-            "description": "API_HASH of your Telegram Account my.telegram.org/apps",
-            "required": true
-        },
-        "HERUKO": {
-            "description": "True or False ?",
-            "required": false
-        },
-        "BOT_USERNAME": {
-            "description": "bot username without @",
-            "required": true
-        }
+      "name": "unicodedetectorbot",
+      "description": "A unicode mess named users detector Bot Written In Python Using Pyrogram.",
+      "keywords": [
+          "python3",
+          "telegram",
+          "bot",
+          "telegram-bot",
+          "pyrogram"
+      ],   
+   "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
+   "logo": "https://telegra.ph/file/5994968fa532cbc6edf32.jpg",
+     "addons": [
+    {
+      "plan": "rediscloud:30"
     }
+  ],
+   "buildpacks": [
+    {
+      "url": "heroku/python"
+    }     
+  ],
+  "env": {
+      "BOT_TOKEN": {
+         "description": "Your bot token. Get one from @BotFather duh",
+         "required": true,
+         "value": ""
+      },
+      "API_ID": {
+         "description": "Get API_ID from my.telegram.org.",
+         "required": true,
+         "value": ""
+      },
+      "API_HASH": {
+         "description": "Get API_HASH from my.telegram.org.",
+         "required": true,
+         "value": ""
+      },    
+      "BOT_USERNAME": {
+         "description": "Your bot username without @",
+         "required": true,
+         "value": "@hostname"
+      },
+      "HERUKO": {
+      "description": "True or False ?",
+      "value": "",
+      "required": false
+      }
+   }
 }

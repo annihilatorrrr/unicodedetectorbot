@@ -1,0 +1,39 @@
+{
+    "name": "unicodedetectorbot",
+    "description": "A unicode mess named users detector Bot Written In Python Using Pyrogram.",
+    "keywords": [
+    "python3",
+    "telegram",
+    "bot",
+    "telegram-bot",
+    "pyrogram"
+    ],
+    "repository": "https://github.com/annihilatorrrr/unicodedetectorbot",
+    "stack": "container",
+    "env": {
+        "BOT_TOKEN": {
+            "description": "Obtain a Telegram bot token by contacting @BotFather",
+            "required": true
+        },
+        "API_ID": {
+            "description": "API_ID of your Telegram Account my.telegram.org/apps",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "API_HASH of your Telegram Account my.telegram.org/apps",
+            "required": true
+        },
+        "REDIS_URL": {
+            "description": "Need for bot db",
+            "required": true
+        },
+        "HERUKO": {
+            "description": "yes ?",
+            "required": false
+        },
+        "BOT_USERNAME": {
+            "description": "bot username without @",
+            "required": true
+        }
+    }
+}

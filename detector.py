@@ -1,3 +1,4 @@
+print("Starting ...")
 from asyncio import sleep
 from logging import INFO, basicConfig, getLogger
 from re import search
@@ -29,7 +30,7 @@ bot = Client(
     api_hash=API_HASH,
     sleep_threshold=15,
 )
-
+BOT_ID = int(BOT_TOKEN.split(":")[0])
 print(f"Started detector with pyrogram version {__version__}")
 
 REDIS = StrictRedis.from_url(REDIS_URL, decode_responses=True)
@@ -132,14 +133,13 @@ async def power(_, m: Message):
     return
 
 
-# thanks to https://github.com/Squirrel-Network/nebula8/blob/master/core/utilities/regex.py
-HAS_ARABIC = "[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufbc1]|[\ufbd3-\ufd3f]|[\ufd50-\ufd8f]|[\ufd92-\ufdc7]|[\ufe70-\ufefc]|[\uFDF0-\uFDFD]+"
-HAS_CIRILLIC = "[а-яА-Я]+"
-HAS_CHINESE = "[\u4e00-\u9fff]+"
-EMOJI = UNICODE_EMOJI["en"]
-
-
 async def check_string(string: str):
+    # thanks to https://github.com/Squirrel-Network/nebula8/blob/master/core/utilities/regex.py
+    HAS_ARABIC = "[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufbc1]|[\ufbd3-\ufd3f]|[\ufd50-\ufd8f]|[\ufd92-\ufdc7]|[\ufe70-\ufefc]|[\uFDF0-\uFDFD]+"
+    HAS_CIRILLIC = "[а-яА-Я]+"
+    HAS_CHINESE = "[\u4e00-\u9fff]+"
+    EMOJI = UNICODE_EMOJI["en"]
+
     check = search(HAS_ARABIC, string)
     check = search(HAS_CHINESE, string)
     check = search(HAS_CIRILLIC, string)
@@ -190,7 +190,7 @@ async def _buttons(c: Client, q: CallbackQuery):
             return
         try:
             await c.kick_chat_member(chat_id, user_id)
-            await q.answer("kicked Succesfully !")
+            await q.answer("kicked Successfully !")
             await q.message.edit_text(editreport)
             await c.unban_chat_member(chat_id, user_id)
             return
@@ -205,7 +205,7 @@ async def _buttons(c: Client, q: CallbackQuery):
             return
         try:
             await c.kick_chat_member(chat_id, user_id)
-            await q.answer("Succesfully Banned!")
+            await q.answer("Successfully Banned!")
             await q.message.edit_text(editreport)
             return
         except RPCError as err:
@@ -310,6 +310,69 @@ async def triggered(c: Client, m: Message):
     if what:
         await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
     return await sleep(3)
+
+
+@bot.on_message(filters.new_chat_members & filters.group, group=99)
+async def wlcmtriggered(c: Client, m: Message):
+    if m and not m.from_user:
+        return
+    if not bool(REDIS.get(f"Chat_{m.chat.id}")):
+        return
+    for member in m.new_chat_members:
+        if member.id == BOT_ID:
+            return await c.send_message(int(m.chat.id), "Thanks for adding me! \
+            Now promote me with ban user permissions and toggle /detector !")
+        x = await c.get_users(int(member.id))
+        user_has = ""
+        try:
+            user_has = x.first_name
+        except TypeError:
+            pass
+        try:
+            user_has += x.last_name
+        except TypeError:
+            pass
+        who = await m.chat.get_member(int(member.id))
+        if who.status in ["creator", "administrator"]:
+            return
+        if not user_has:
+            await c.send_message(int(m.chat.id), "User detected without a name!!")
+            return await sleep(3)
+
+        what = await check_string(str(user_has))
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "Kick",
+                    callback_data=f"action_=kick={member.id}",
+                ),
+                InlineKeyboardButton(
+                    "Ban",
+                    callback_data=f"action_=ban={member.id}",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Mute",
+                    callback_data=f"action_=mute={member.id}",
+                ),
+                InlineKeyboardButton(
+                    "Solved !",
+                    callback_data=f"action_=oke={member.id}",
+                ),
+            ],
+        ])
+        admin_data = await bot.get_chat_members(int(m.chat.id),
+                                                filter="administrators")
+        ADMINS_TAG = str()
+        TAG = "\u200b"
+        for admin in admin_data:
+            if not admin.user.is_bot:
+                ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
+        ADMINS_TAG += "Unicode user detected !!"
+        if what:
+            await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
+        return await sleep(3)
 
 
 bot.run()

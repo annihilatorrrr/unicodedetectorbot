@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.session
+*.session-journal
+Procfile
+*.txt
+LICENCE
+*.md
+*.txt
+*.toml
+*.gitignore
+*.dockerignore
+Dockerfile
+*.yml

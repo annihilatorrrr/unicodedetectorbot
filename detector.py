@@ -66,7 +66,7 @@ async def start(_, m: Message):
 
 
 @bot.on_message(filters.command("help") & ~filters.bot)
-async def help(_, m: Message):
+async def help_re(_, m: Message):
     if m and not m.from_user:
         return
     return await m.reply_text(

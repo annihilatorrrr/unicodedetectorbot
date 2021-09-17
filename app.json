@@ -2,11 +2,11 @@
     "name": "unicodedetectorbot",
     "description": "A unicode mess named users detector Bot Written In Python Using Pyrogram.",
     "keywords": [
-    "python3",
-    "telegram",
-    "bot",
-    "telegram-bot",
-    "pyrogram",
+        "python3",
+        "telegram",
+        "bot",
+        "telegram-bot",
+        "pyrogram",
     ],
     "addons": [
           {

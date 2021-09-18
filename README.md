@@ -23,7 +23,7 @@ Other way:
 Give a star to this repo and fork it then,
 Install Python v3.9
 turn on virtualenv then:
-Fork or Clone the project using
+Clone the project using
 
 ``git clone https://github.com/annihilatorrrr/unicodedetectorbot``
 

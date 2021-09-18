@@ -107,28 +107,27 @@ async def power(_, m: Message):
         return await m.reply_text("This command works only on supergroups!")
 
     permissions = await member_permissions(int(m.chat.id), int(m.from_user.id))
-    if "can_restrict_members" and "can_change_info" not in permissions:
+    if "can_change_info" not in permissions:
         return await m.reply_text("You don't have enough permissions!")
     args = m.text.split()
     status = REDIS.get(f"Chat_{m.chat.id}")
 
-    if len(args) >= 2:
-        option = args[1].lower()
-        if option in ("yes", "on", "true"):
-            REDIS.set(f"Chat_{m.chat.id}", str("True"))
-            await m.reply_text(
-                "Turned on.",
-                quote=True,
-            )
-        elif option in ("no", "off", "false"):
-            REDIS.set(f"Chat_{m.chat.id}", str("False"))
-            await m.reply_text(
-                "Turned off.",
-                quote=True,
-            )
-    else:
+    if len(args) < 2:
         return await m.reply_text(
             f"This group's current setting is: `{status}`\nTry with on and off to toggle!"
+        )
+    option = args[1].lower()
+    if option in ("yes", "on", "true"):
+        REDIS.set(f"Chat_{m.chat.id}", str("True"))
+        await m.reply_text(
+            "Turned on.",
+            quote=True,
+        )
+    elif option in ("no", "off", "false"):
+        REDIS.set(f"Chat_{m.chat.id}", str("False"))
+        await m.reply_text(
+            "Turned off.",
+            quote=True,
         )
     return
 
@@ -147,10 +146,7 @@ async def check_string(string: str):
         if a in EMOJI:
             check4 = True
     CHK = [check1, check2, check3, check4]
-    if not any(CHK):
-        return False
-    else:
-        return True
+    return any(CHK)
 
 
 @bot.on_callback_query(filters.regex("^action_"))
@@ -310,7 +306,7 @@ async def triggered(c: Client, m: Message):
     TAG = "\u200b"
     for admin in admin_data:
         if not admin.user.is_bot:
-            ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
+            ADMINS_TAG += f"[{TAG}](tg://user?id={admin.user.id})"
     ADMINS_TAG += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
         await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)

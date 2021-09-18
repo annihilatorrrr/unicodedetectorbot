@@ -69,7 +69,8 @@ async def help_re(_, m: Message):
     if m and not m.from_user:
         return
     return await m.reply_text(
-        "Just add me to your chat with ban user permission and toggle /detector on | off !")
+        "Just add me to your chat with ban user permission and toggle /detector on | off !"
+    )
 
 
 @bot.on_message(filters.command("ping") & ~filters.bot)

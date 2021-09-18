@@ -255,7 +255,8 @@ async def _buttons(c: Client, q: CallbackQuery):
     return
 
 
-@bot.on_message(filters.group & filters.text & filters.media & ~filters.bot, group=69)
+@bot.on_message(filters.group & filters.text & filters.media & ~filters.bot,
+                group=69)
 async def triggered(c: Client, m: Message):
     if m and not m.from_user:
         return

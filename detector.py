@@ -59,8 +59,8 @@ async def start(_, m: Message):
         ],
     ])
     return await m.reply_text(
-        "Hi there! i'm the one who removes all unicode users from your chat,\
-        if you give me a chance!\nCheck /help !",
+        """Hi there! i'm the one who removes all unicode users from your chat,\
+if you give me a chance!\nCheck /help !""",
         reply_markup=kb,
     )
 
@@ -70,8 +70,8 @@ async def help_re(_, m: Message):
     if m and not m.from_user:
         return
     return await m.reply_text(
-        "Just add me to your chat with ban user permission and \
-        toggle /detector on | off !")
+        """Just add me to your chat with ban user permission and \
+toggle /detector on | off !""")
 
 
 @bot.on_message(filters.command("ping") & ~filters.bot)

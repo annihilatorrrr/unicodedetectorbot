@@ -274,7 +274,9 @@ async def triggered(c: Client, m: Message):
     if who.status in ["creator", "administrator"]:
         return
     if not user_has:
-        await c.send_message(int(m.chat.id), f"User {m.from_user.mention} detected without a name!!")
+        await c.send_message(
+            int(m.chat.id),
+            f"User {m.from_user.mention} detected without a name!!")
         return await sleep(3)
 
     what = await check_string(str(user_has))
@@ -340,8 +342,9 @@ async def wlcmtriggered(c: Client, m: Message):
         if who.status in ["creator", "administrator"]:
             return
         if not user_has:
-            await c.send_message(int(m.chat.id),
-                                 f"User {member.mention} detected without a name!!")
+            await c.send_message(
+                int(m.chat.id),
+                f"User {member.mention} detected without a name!!")
             return await sleep(3)
 
         what = await check_string(str(user_has))

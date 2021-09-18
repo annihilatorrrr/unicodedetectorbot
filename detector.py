@@ -141,13 +141,13 @@ async def check_string(string: str):
     HAS_CHINESE = "[\u4e00-\u9fff]+"
     EMOJI = UNICODE_EMOJI["en"]
 
-    check = search(HAS_ARABIC, string)
-    check = search(HAS_CHINESE, string)
-    check = search(HAS_CIRILLIC, string)
+    check1 = search(HAS_ARABIC, string)
+    check2 = search(HAS_CHINESE, string)
+    check3 = search(HAS_CIRILLIC, string)
     for a in string:
         if a in EMOJI:
-            check = True
-    if check is None:
+            check4 = True
+    if not any(check1, check2, check3, check4):
         return False
     else:
         return True
@@ -274,7 +274,7 @@ async def triggered(c: Client, m: Message):
     if who.status in ["creator", "administrator"]:
         return
     if not user_has:
-        await c.send_message(int(m.chat.id), "User detected without a name!!")
+        await c.send_message(int(m.chat.id), f"User {m.from_user.mention} detected without a name!!")
         return await sleep(3)
 
     what = await check_string(str(user_has))
@@ -307,7 +307,7 @@ async def triggered(c: Client, m: Message):
     for admin in admin_data:
         if not admin.user.is_bot:
             ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
-    ADMINS_TAG += "Unicode user detected !!"
+    ADMINS_TAG += f"Unicode user detected !! - {m.from_user.mention}"
     if what:
         await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
     return await sleep(3)
@@ -341,7 +341,7 @@ async def wlcmtriggered(c: Client, m: Message):
             return
         if not user_has:
             await c.send_message(int(m.chat.id),
-                                 "User detected without a name!!")
+                                 f"User {member.mention} detected without a name!!")
             return await sleep(3)
 
         what = await check_string(str(user_has))
@@ -375,7 +375,7 @@ async def wlcmtriggered(c: Client, m: Message):
             if not admin.user.is_bot:
                 ADMINS_TAG = ADMINS_TAG + \
                     f"[{TAG}](tg://user?id={admin.user.id})"
-        ADMINS_TAG += "Unicode user detected !!"
+        ADMINS_TAG += f"User {member.mention} detected as a Unicode user !!"
         if what:
             await c.send_message(int(m.chat.id),
                                  ADMINS_TAG,

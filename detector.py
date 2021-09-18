@@ -255,10 +255,11 @@ async def _buttons(c: Client, q: CallbackQuery):
     return
 
 
-@bot.on_message(filters.group & filters.text & filters.media & ~filters.bot,
-                group=69)
+@bot.on_message(filters.group & filters.all & ~filters.bot)
 async def triggered(c: Client, m: Message):
     if m and not m.from_user:
+        return
+    if m and m.left_chat_member:
         return
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
@@ -311,7 +312,7 @@ async def triggered(c: Client, m: Message):
     for admin in admin_data:
         if not admin.user.is_bot:
             ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
-    ADMINS_TAG += f"Unicode user detected !! - {m.from_user.mention}"
+    ADMINS_TAG += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
         await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
     return await sleep(3)

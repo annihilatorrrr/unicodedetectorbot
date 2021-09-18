@@ -147,7 +147,8 @@ async def check_string(string: str):
     for a in string:
         if a in EMOJI:
             check4 = True
-    if not any(check1, check2, check3, check4):
+    CHK = [check1, check2, check3, check4]
+    if not any(CHK):
         return False
     else:
         return True

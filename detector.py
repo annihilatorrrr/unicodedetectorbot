@@ -15,7 +15,7 @@ from pyrogram.types import (
 )
 from redis import StrictRedis
 
-from config import API_HASH, APP_ID, BOT_USERNAME, BOT_TOKEN, REDIS_URL
+from config import API_HASH, APP_ID, BOT_TOKEN, BOT_USERNAME, REDIS_URL
 
 print("Starting ...")
 

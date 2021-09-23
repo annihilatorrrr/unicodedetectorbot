@@ -44,10 +44,8 @@ finally:
     LOGGER.info("Your redis server is alive!")
 
 
-@bot.on_message(filters.command("start") & ~filters.bot)
+@bot.on_message(filters.command(["start", f"start@{BOT_USERNAME}"]) & ~filters.bot)
 async def start(_, m: Message):
-    if m and not m.from_user:
-        return
     if m.chat.type != "private":
         return await m.reply_text("I'm alive!")
     kb = InlineKeyboardMarkup([
@@ -59,24 +57,20 @@ async def start(_, m: Message):
         ],
     ])
     return await m.reply_text(
-        "Hi there! i'm the one who removes all unicode users from your chat, if you give me a chance!\nCheck /help !",
+        "Hi there! i'm the one who removes all unicode users from your chat, if you give me a chance!\nCheck /help and for support join @memerschatgroup",
         reply_markup=kb,
     )
 
 
-@bot.on_message(filters.command("help") & ~filters.bot)
+@bot.on_message(filters.command(["help", f"help@{BOT_USERNAME}"]) & ~filters.bot)
 async def help_re(_, m: Message):
-    if m and not m.from_user:
-        return
     return await m.reply_text(
-        "Just add me to your chat with ban user permission and toggle /detector on | off !"
+        "Just add me to your chat with ban user permission and toggle /detector on | off !\nNote: for support join @memerschatgroup and this is not a final release !"
     )
 
 
-@bot.on_message(filters.command("ping") & ~filters.bot)
+@bot.on_message(filters.command(["ping", f"ping@{BOT_USERNAME}"]) & ~filters.bot)
 async def ping(_, m: Message):
-    if m and not m.from_user:
-        return
     starttime = time()
     reply = await m.reply_text("Pinging ...")
     delta_ping = time() - starttime
@@ -99,7 +93,7 @@ async def member_permissions(chat_id: int, user_id: int):
     return perms
 
 
-@bot.on_message(filters.command("detector") & ~filters.bot)
+@bot.on_message(filters.command(["detector", f"detector@{BOT_USERNAME}"]) & ~filters.bot)
 async def power(_, m: Message):
     if m and not m.from_user:
         return
@@ -143,9 +137,12 @@ async def check_string(string: str):
     check1 = search(HAS_ARABIC, string)
     check2 = search(HAS_CHINESE, string)
     check3 = search(HAS_CIRILLIC, string)
+    check4 = None
     for a in string:
         if a in EMOJI:
             check4 = True
+        else:
+            check4 = None
     CHK = [check1, check2, check3, check4]
     if not any(CHK):
         return False
@@ -194,10 +191,18 @@ async def _buttons(c: Client, q: CallbackQuery):
             await q.answer("kicked Successfully !")
             await q.message.edit_text(editreport)
             await c.unban_chat_member(chat_id, user_id)
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
         except RPCError as err:
             await q.message.edit_text(
                 f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>")
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
     elif action == "ban":
         if "can_restrict_members" not in permissions:
@@ -208,9 +213,17 @@ async def _buttons(c: Client, q: CallbackQuery):
             await c.kick_chat_member(chat_id, user_id)
             await q.answer("Successfully Banned!")
             await q.message.edit_text(editreport)
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
     elif action == "mute":
         if "can_restrict_members" not in permissions:
@@ -236,9 +249,17 @@ async def _buttons(c: Client, q: CallbackQuery):
             )
             await q.answer("Muted !")
             await q.message.edit_text(editreport)
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
+            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+            if already_triggered and int(user_id) in already_triggered:
+                REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+                return
             return
     elif action == "oke":
         if "can_restrict_members" not in permissions:
@@ -250,6 +271,10 @@ async def _buttons(c: Client, q: CallbackQuery):
                            show_alert=True)
             return
         await q.message.edit_text(editreport)
+        already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
+        if already_triggered and int(user_id) in already_triggered:
+            REDIS.srem(f"IS_USER_{chat_id}", int(user_id))
+            return
         return
     return
 
@@ -262,14 +287,20 @@ async def triggered(c: Client, m: Message):
         return
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
-    x = await c.get_users(int(m.from_user.id))
+    already_triggered = list(REDIS.sunion(f"IS_USER_{m.chat.id}"))
+    if already_triggered and int(m.from_user.id) in already_triggered:
+        return
+    else:
+        REDIS.sadd(f"IS_USER_{m.chat.id}", int(m.from_user.id))
+
+
     user_has = ""
     try:
-        user_has = x.first_name
+        user_has = m.from_user.first_name
     except TypeError:
         pass
     try:
-        user_has += x.last_name
+        user_has += m.from_user.last_name
     except TypeError:
         pass
     who = await m.chat.get_member(int(m.from_user.id))
@@ -306,14 +337,15 @@ async def triggered(c: Client, m: Message):
     ])
     admin_data = await bot.get_chat_members(int(m.chat.id),
                                             filter="administrators")
-    ADMINS_TAG = str()
-    TAG = "\u200b"
+    admin_tag = str()
+    tag = "\u200b"
     for admin in admin_data:
         if not admin.user.is_bot:
-            ADMINS_TAG = ADMINS_TAG + f"[{TAG}](tg://user?id={admin.user.id})"
-    ADMINS_TAG += f"User {m.from_user.mention} is detected as a Unicode user !!"
+            admin_tag = admin_tag + f"[{tag}](tg://user?id={admin.user.id})"
+    admin_tag += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
-        await c.send_message(int(m.chat.id), ADMINS_TAG, reply_markup=keyboard)
+
+        await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
     return await sleep(3)
 
 

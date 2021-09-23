@@ -283,7 +283,7 @@ async def triggered(c: Client, m: Message):
         for a in already_triggered:
             LOGGER.info(f"chk - {a}")
             if a == str(m.from_user.id):
-                LOGGER.info('chk')
+                LOGGER.info("chk")
                 return
 
     user_has = ""

@@ -285,20 +285,16 @@ async def _buttons(c: Client, q: CallbackQuery):
 
 @bot.on_message(filters.group & filters.all & ~filters.bot)
 async def triggered(c: Client, m: Message):
-    LOGGER.info("a")
     if m and not m.from_user:
         return
-    LOGGER.info("a")
     if m and m.left_chat_member:
         return
-    LOGGER.info("a")
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
-    LOGGER.info("a")
     already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
-    LOGGER.info("a")
+    LOGGER.info(f"{already_triggered}")
     for a in already_triggered:
-        if int(a) == int(m.from_user.id):
+        if str(a) == str(m.from_user.id):
             LOGGER.info("a")
             continue
 

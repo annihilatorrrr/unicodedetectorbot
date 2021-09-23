@@ -314,6 +314,8 @@ async def triggered(c: Client, m: Message):
     what = await check_string(str(user_has))
     if not what:
         rm_indb(int(m.chat.id), m.from_user.id)
+        LOGGER.info("Ok !")
+        return
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(

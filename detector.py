@@ -150,7 +150,7 @@ async def check_string(string: str):
         if not any(CHK):
             return False
         return True
-    except Exception:
+    except ValueError:
         return False
 
 

@@ -278,13 +278,6 @@ async def triggered(c: Client, m: Message):
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
     LOGGER.info("Checking ...")
-    already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
-    if already_triggered:
-        for a in already_triggered:
-            if a == str(m.from_user.id):
-                LOGGER.info("User is in db.")
-                return
-
     user_has = ""
     try:
         user_has = m.from_user.first_name
@@ -294,6 +287,17 @@ async def triggered(c: Client, m: Message):
         user_has += m.from_user.last_name
     except TypeError:
         pass
+    what = await check_string(str(user_has))
+    already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
+    if already_triggered:
+        for a in already_triggered:
+            if a == str(m.from_user.id):
+                LOGGER.info("User is in db.")
+                if not what:
+                    REDIS.srem(f"User_{m.chat.id}", m.from_user.id)
+                    return
+                return
+
     who = await m.chat.get_member(int(m.from_user.id))
     if who.status in ["creator", "administrator"]:
         return
@@ -303,7 +307,6 @@ async def triggered(c: Client, m: Message):
             f"User {m.from_user.mention} detected without a name!!")
         return await sleep(3)
 
-    what = await check_string(str(user_has))
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(

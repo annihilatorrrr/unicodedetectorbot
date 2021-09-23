@@ -340,6 +340,8 @@ async def triggered(c: Client, m: Message):
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
+    else:
+        rm_indb(int(m.chat.id), str(m.from_user.id))
     return await sleep(3)
 
 

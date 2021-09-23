@@ -292,10 +292,10 @@ async def triggered(c: Client, m: Message):
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
     already_triggered = list(REDIS.sunion(f"IS_USER_{m.chat.id}"))
+    print(already_triggered)
     if already_triggered and int(m.from_user.id) in already_triggered:
+        print("a")
         return
-    else:
-        REDIS.sadd(f"IS_USER_{m.chat.id}", int(m.from_user.id))
 
     user_has = ""
     try:
@@ -347,8 +347,8 @@ async def triggered(c: Client, m: Message):
             admin_tag = admin_tag + f"[{tag}](tg://user?id={admin.user.id})"
     admin_tag += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
-
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
+        REDIS.sadd(f"IS_USER_{m.chat.id}", int(m.from_user.id))
     return await sleep(3)
 
 

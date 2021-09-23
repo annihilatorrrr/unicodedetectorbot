@@ -308,6 +308,9 @@ async def triggered(c: Client, m: Message):
         return await sleep(3)
 
     what = await check_string(str(user_has))
+    if not what:
+        oo = rm_indb(int(m.chat.id), m.from_user.id)
+        LOGGER.info(f"Removed {m.from_user.id} from db - {oo}")
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
@@ -342,9 +345,6 @@ async def triggered(c: Client, m: Message):
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
         LOGGER.info(f"Added {m.from_user.id} in db.")
-    else:
-        oo = rm_indb(int(m.chat.id), m.from_user.id)
-        LOGGER.info(f"Removed {m.from_user.id} from db - {oo}")
     return await sleep(3)
 
 

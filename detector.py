@@ -138,18 +138,22 @@ async def check_string(string: str):
     HAS_CHINESE = "[\u4e00-\u9fff]+"
     EMOJI = UNICODE_EMOJI["en"]
 
-    check1 = search(HAS_ARABIC, string)
-    check2 = search(HAS_CHINESE, string)
-    check3 = search(HAS_CIRILLIC, string)
-    check4 = None
-    for a in string:
-        if a in EMOJI:
-            check4 = True
-    CHK = [check1, check2, check3, check4]
-    if not any(CHK):
-        return False
-    else:
-        return True
+    try:
+        check1 = search(HAS_ARABIC, string)
+        check2 = search(HAS_CHINESE, string)
+        check3 = search(HAS_CIRILLIC, string)
+        check4 = None
+        for a in string:
+            if a in EMOJI:
+                check4 = True
+        CHK = [check1, check2, check3, check4]
+        if not any(CHK):
+            return False
+        else:
+            return True
+    except Exception as e:
+        LOGGER.info(f"Error: {e}")
+        return
 
 
 def rm_indb(_id: int, user_):

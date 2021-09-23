@@ -158,7 +158,7 @@ def rm_indb(_id: int, user_):
         for a in already_triggered:
             if a == str(user_):
                 REDIS.srem(f"User_{_id}", user_)
-                LOGGER.info(f"Removed {m.from_user.id} from db.")
+                LOGGER.info(f"Removed {user_} of {_id} from db.")
                 pass
             pass
         pass
@@ -308,7 +308,6 @@ async def triggered(c: Client, m: Message):
         return await sleep(3)
 
     what = await check_string(str(user_has))
-    LOGGER.info(what)
     if not what:
         rm_indb(int(m.chat.id), m.from_user.id)
     keyboard = InlineKeyboardMarkup([
@@ -344,7 +343,7 @@ async def triggered(c: Client, m: Message):
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
-        LOGGER.info(f"Added {m.from_user.id} in db.")
+        LOGGER.info(f"Added {m.from_user.id} from {m.chat.id} in db.")
     return await sleep(3)
 
 

@@ -156,12 +156,9 @@ async def check_string(string: str):
 
 def rm_indb(_id: int, user_):
     already_triggered = list(REDIS.sunion(f"User_{_id}"))
-    LOGGER.info(f"rm_indb - {already_triggered}")
     if already_triggered:
         for a in already_triggered:
-            LOGGER.info(f"rm_indb - {a}")
             if a == str(user_):
-                LOGGER.info("rm_indb")
                 REDIS.srem(f"User_{_id}", user_)
                 return True
     else:
@@ -178,6 +175,7 @@ async def _buttons(c: Client, q: CallbackQuery):
     mention = (await c.get_users(user_id)).mention
     permissions = await member_permissions(chat_id, preeser)
     whopress = await q.message.chat.get_member(preeser)
+    LOGGER.info("Action buttons pressed ...")
     if whopress.status not in ["creator", "administrator"]:
         await q.answer(
             "You're not even an admin, don't try this!",
@@ -284,15 +282,11 @@ async def triggered(c: Client, m: Message):
         return
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
-    oo = rm_indb(int(m.chat.id), m.from_user.id)
-    LOGGER.info(f"oo - {oo}")
+    LOGGER.info("Checking ...")
     already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
-    LOGGER.info(f"chk - {already_triggered}")
     if already_triggered:
         for a in already_triggered:
-            LOGGER.info(f"chk - {a}")
             if a == str(m.from_user.id):
-                LOGGER.info("chk")
                 return
 
     user_has = ""
@@ -347,10 +341,10 @@ async def triggered(c: Client, m: Message):
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
+        LOGGER.info(f"Added {m.from_user.id} in db.")
     else:
-        LOGGER.info("hh")
         oo = rm_indb(int(m.chat.id), m.from_user.id)
-        LOGGER.info(f"oo - {oo}")
+        LOGGER.info(f"Removed {m.from_user.id} from db - {oo}")
     return await sleep(3)
 
 

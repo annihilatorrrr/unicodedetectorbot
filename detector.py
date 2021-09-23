@@ -105,28 +105,27 @@ async def power(_, m: Message):
         return await m.reply_text("This command works only on supergroups!")
 
     permissions = await member_permissions(int(m.chat.id), int(m.from_user.id))
-    if "can_restrict_members" and "can_change_info" not in permissions:
+    if "can_change_info" not in permissions:
         return await m.reply_text("You don't have enough permissions!")
     args = m.text.split()
     status = REDIS.get(f"Chat_{m.chat.id}")
 
-    if len(args) >= 2:
-        option = args[1].lower()
-        if option in ("yes", "on", "true"):
-            REDIS.set(f"Chat_{m.chat.id}", str("True"))
-            await m.reply_text(
-                "Turned on.",
-                quote=True,
-            )
-        elif option in ("no", "off", "false"):
-            REDIS.set(f"Chat_{m.chat.id}", str("False"))
-            await m.reply_text(
-                "Turned off.",
-                quote=True,
-            )
-    else:
+    if len(args) < 2:
         return await m.reply_text(
             f"This group's current setting is: `{status}`\nTry with on and off to toggle!"
+        )
+    option = args[1].lower()
+    if option in ("yes", "on", "true"):
+        REDIS.set(f"Chat_{m.chat.id}", str("True"))
+        await m.reply_text(
+            "Turned on.",
+            quote=True,
+        )
+    elif option in ("no", "off", "false"):
+        REDIS.set(f"Chat_{m.chat.id}", str("False"))
+        await m.reply_text(
+            "Turned off.",
+            quote=True,
         )
     return
 
@@ -147,23 +146,21 @@ async def check_string(string: str):
             if a in EMOJI:
                 check4 = True
         CHK = [check1, check2, check3, check4]
-        if not any(CHK):
-            return False
-        return True
+        return any(CHK)
     except Exception:
         return False
 
 
 def rm_indb(_id: int, user_):
     already_triggered = list(REDIS.sunion(f"User_{_id}"))
-    if already_triggered:
-        for a in already_triggered:
-            if a == str(user_):
-                REDIS.srem(f"User_{_id}", user_)
-                LOGGER.info(f"Removed {user_} of {_id} from db.")
-                return True
-            return False
-    else:
+    if not already_triggered:
+        return False
+
+    for a in already_triggered:
+        if a == str(user_):
+            REDIS.srem(f"User_{_id}", user_)
+            LOGGER.info(f"Removed {user_} of {_id} from db.")
+            return True
         return False
 
 
@@ -332,7 +329,7 @@ async def triggered(c: Client, m: Message):
     tag = "\u200b"
     for admin in admin_data:
         if not admin.user.is_bot:
-            admin_tag = admin_tag + f"[{tag}](tg://user?id={admin.user.id})"
+            admin_tag += f"[{tag}](tg://user?id={admin.user.id})"
     admin_tag += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)

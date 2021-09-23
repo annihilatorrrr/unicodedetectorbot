@@ -138,22 +138,18 @@ async def check_string(string: str):
     HAS_CHINESE = "[\u4e00-\u9fff]+"
     EMOJI = UNICODE_EMOJI["en"]
 
-    try:
-        check1 = search(HAS_ARABIC, string)
-        check2 = search(HAS_CHINESE, string)
-        check3 = search(HAS_CIRILLIC, string)
-        check4 = None
-        for a in string:
-            if a in EMOJI:
-                check4 = True
-        CHK = [check1, check2, check3, check4]
-        if not any(CHK):
-            return False
-        else:
-            return True
-    except Exception as e:
-        LOGGER.info(f"Error: {e}")
-        return
+    check1 = search(HAS_ARABIC, string)
+    check2 = search(HAS_CHINESE, string)
+    check3 = search(HAS_CIRILLIC, string)
+    check4 = None
+    for a in string:
+        if a in EMOJI:
+            check4 = True
+    CHK = [check1, check2, check3, check4]
+    if not any(CHK):
+        return False
+    else:
+        return True
 
 
 def rm_indb(_id: int, user_):
@@ -311,10 +307,6 @@ async def triggered(c: Client, m: Message):
         return await sleep(3)
 
     what = await check_string(str(user_has))
-    if not what:
-        isor = rm_indb(int(m.chat.id), m.from_user.id)
-        LOGGER.info(f"Ok ! Removed - {isor}")
-        return
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
@@ -349,6 +341,9 @@ async def triggered(c: Client, m: Message):
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
         LOGGER.info(f"Added {m.from_user.id} from {m.chat.id} in db.")
+    else:
+        isor = rm_indb(int(m.chat.id), m.from_user.id)
+        LOGGER.info(f"Ok ! Removed - {isor}")
     return await sleep(3)
 
 

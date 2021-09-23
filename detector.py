@@ -138,18 +138,21 @@ async def check_string(string: str):
     HAS_CHINESE = "[\u4e00-\u9fff]+"
     EMOJI = UNICODE_EMOJI["en"]
 
-    check1 = search(HAS_ARABIC, string)
-    check2 = search(HAS_CHINESE, string)
-    check3 = search(HAS_CIRILLIC, string)
-    check4 = None
-    for a in string:
-        if a in EMOJI:
-            check4 = True
-    CHK = [check1, check2, check3, check4]
-    if not any(CHK):
+    try:
+        check1 = search(HAS_ARABIC, string)
+        check2 = search(HAS_CHINESE, string)
+        check3 = search(HAS_CIRILLIC, string)
+        check4 = None
+        for a in string:
+            if a in EMOJI:
+                check4 = True
+        CHK = [check1, check2, check3, check4]
+        if not any(CHK):
+            return False
+        else:
+            return True
+    except Exception:
         return False
-    else:
-        return True
 
 
 def rm_indb(_id: int, user_):
@@ -160,6 +163,8 @@ def rm_indb(_id: int, user_):
                 REDIS.srem(f"User_{_id}", user_)
                 LOGGER.info(f"Removed {user_} of {_id} from db.")
                 return True
+            else:
+                return False
     else:
         return False
 

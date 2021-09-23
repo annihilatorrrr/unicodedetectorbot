@@ -3,7 +3,7 @@
 </h1>
 Detects unicode names members in a tg chat & provides a option to take action on that user !
 
-Public bot: [@scarletwitchprobot](https://telegram.me/scarletwitchprobot)
+Public bot: [@scarletwitchprobot](https://telegram.me/scarletwitchprobot) - Deploy your own It's for demo only.
 
 Support or any doubts at : [@memerschatgroup](https://telegram.me/memerschatgroup)
 
@@ -37,5 +37,5 @@ Run the bot using
 
 ``python detector.py``
 
-Credits:
-@thehamkercat - wbb, @divkix - optimization tips !! - Tg usernames :) and some in comments of the code!
+Credits and Thanks to :
+[@thehamkercat - wbb](https://github.com/TheHamkerCat/WilliamButcherBot), [@divkix - optimization tips](https://github.com/DivideProjects/Alita_Robot), [idea](https://github.com/Squirrel-Network/nebula8/blob/master/core/utilities/regex.py) !

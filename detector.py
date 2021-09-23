@@ -149,8 +149,7 @@ async def check_string(string: str):
         CHK = [check1, check2, check3, check4]
         if not any(CHK):
             return False
-        else:
-            return True
+        return True
     except Exception:
         return False
 
@@ -163,8 +162,7 @@ def rm_indb(_id: int, user_):
                 REDIS.srem(f"User_{_id}", user_)
                 LOGGER.info(f"Removed {user_} of {_id} from db.")
                 return True
-            else:
-                return False
+            return False
     else:
         return False
 

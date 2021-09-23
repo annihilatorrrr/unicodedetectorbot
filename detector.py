@@ -160,9 +160,8 @@ def rm_indb(_id: int, user_):
         for a in already_triggered:
             if a == str(user_):
                 REDIS.srem(f"User_{_id}", user_)
-                return "True"
-    else:
-        return "False"
+                pass
+            pass
 
 
 @bot.on_callback_query(filters.regex("^action_"))
@@ -308,9 +307,10 @@ async def triggered(c: Client, m: Message):
         return await sleep(3)
 
     what = await check_string(str(user_has))
+    print(what)
     if not what:
-        oo = rm_indb(int(m.chat.id), m.from_user.id)
-        LOGGER.info(f"Removed {m.from_user.id} from db - {oo}")
+        rm_indb(int(m.chat.id), m.from_user.id)
+        LOGGER.info(f"Removed {m.from_user.id} from db.")
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(

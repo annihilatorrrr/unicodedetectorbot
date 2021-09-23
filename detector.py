@@ -161,8 +161,8 @@ def rm_indb(_id: int, user_):
                 LOGGER.info(f"Removed {user_} of {_id} from db.")
                 return True
     else:
-        return False    
-    
+        return False
+
 
 @bot.on_callback_query(filters.regex("^action_"))
 async def _buttons(c: Client, q: CallbackQuery):

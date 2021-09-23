@@ -44,7 +44,8 @@ finally:
     LOGGER.info("Your redis server is alive!")
 
 
-@bot.on_message(filters.command(["start", f"start@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(
+    filters.command(["start", f"start@{BOT_USERNAME}"]) & ~filters.bot)
 async def start(_, m: Message):
     if m.chat.type != "private":
         return await m.reply_text("I'm alive!")
@@ -62,14 +63,16 @@ async def start(_, m: Message):
     )
 
 
-@bot.on_message(filters.command(["help", f"help@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(
+    filters.command(["help", f"help@{BOT_USERNAME}"]) & ~filters.bot)
 async def help_re(_, m: Message):
     return await m.reply_text(
         "Just add me to your chat with ban user permission and toggle /detector on | off !\nNote: for support join @memerschatgroup and this is not a final release !"
     )
 
 
-@bot.on_message(filters.command(["ping", f"ping@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(
+    filters.command(["ping", f"ping@{BOT_USERNAME}"]) & ~filters.bot)
 async def ping(_, m: Message):
     starttime = time()
     reply = await m.reply_text("Pinging ...")
@@ -93,7 +96,8 @@ async def member_permissions(chat_id: int, user_id: int):
     return perms
 
 
-@bot.on_message(filters.command(["detector", f"detector@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(
+    filters.command(["detector", f"detector@{BOT_USERNAME}"]) & ~filters.bot)
 async def power(_, m: Message):
     if m and not m.from_user:
         return
@@ -292,7 +296,6 @@ async def triggered(c: Client, m: Message):
         return
     else:
         REDIS.sadd(f"IS_USER_{m.chat.id}", int(m.from_user.id))
-
 
     user_has = ""
     try:

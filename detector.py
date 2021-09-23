@@ -293,9 +293,12 @@ async def triggered(c: Client, m: Message):
         return
     already_triggered = list(REDIS.sunion(f"IS_USER_{m.chat.id}"))
     print(already_triggered)
-    if already_triggered and int(m.from_user.id) in already_triggered:
-        print("a")
-        return
+    if already_triggered:
+        for a in already_triggered:
+            if int(a) == int(m.from_user.id):
+                print("a")
+                return
+            continue
 
     user_has = ""
     try:

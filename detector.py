@@ -138,20 +138,20 @@ async def check_string(string: str):
     HAS_CHINESE = "[\u4e00-\u9fff]+"
     EMOJI = UNICODE_EMOJI["en"]
 
-    check1 = search(HAS_ARABIC, string)
-    check2 = search(HAS_CHINESE, string)
-    check3 = search(HAS_CIRILLIC, string)
-    check4 = None
-    for a in string:
-        if a in EMOJI:
-            check4 = True
-        else:
-            check4 = None
-    CHK = [check1, check2, check3, check4]
-    if not any(CHK):
-        return False
-    else:
+    try:
+        check1 = search(HAS_ARABIC, string)
+        check2 = search(HAS_CHINESE, string)
+        check3 = search(HAS_CIRILLIC, string)
+        check4 = None
+        for a in string:
+            if a in EMOJI:
+                check4 = True
+        CHK = [check1, check2, check3, check4]
+        if not any(CHK):
+            return False
         return True
+    except ValueError:
+        return False
 
 
 def rm_indb(_id: int, user_):
@@ -160,7 +160,9 @@ def rm_indb(_id: int, user_):
         for a in already_triggered:
             if a == str(user_):
                 REDIS.srem(f"User_{_id}", user_)
+                LOGGER.info(f"Removed {user_} of {_id} from db.")
                 return True
+            return False
     else:
         return False
 
@@ -207,13 +209,11 @@ async def _buttons(c: Client, q: CallbackQuery):
             await q.answer("kicked Successfully !")
             await q.message.edit_text(editreport)
             await c.unban_chat_member(chat_id, user_id)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(
                 f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "ban":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -223,12 +223,10 @@ async def _buttons(c: Client, q: CallbackQuery):
             await c.kick_chat_member(chat_id, user_id)
             await q.answer("Successfully Banned!")
             await q.message.edit_text(editreport)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "mute":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -253,12 +251,10 @@ async def _buttons(c: Client, q: CallbackQuery):
             )
             await q.answer("Muted !")
             await q.message.edit_text(editreport)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "oke":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -269,8 +265,7 @@ async def _buttons(c: Client, q: CallbackQuery):
                            show_alert=True)
             return
         await q.message.edit_text(editreport)
-        rm_indb(int(chat_id), user_id)
-        return
+        return rm_indb(int(chat_id), user_id)
     return
 
 
@@ -283,12 +278,6 @@ async def triggered(c: Client, m: Message):
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
     LOGGER.info("Checking ...")
-    already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
-    if already_triggered:
-        for a in already_triggered:
-            if a == str(m.from_user.id):
-                return
-
     user_has = ""
     try:
         user_has = m.from_user.first_name
@@ -298,6 +287,17 @@ async def triggered(c: Client, m: Message):
         user_has += m.from_user.last_name
     except TypeError:
         pass
+    what = await check_string(str(user_has))
+    already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
+    if already_triggered:
+        for a in already_triggered:
+            if a == str(m.from_user.id):
+                LOGGER.info("User is in db.")
+                if not what:
+                    REDIS.srem(f"User_{m.chat.id}", m.from_user.id)
+                    return
+                return
+
     who = await m.chat.get_member(int(m.from_user.id))
     if who.status in ["creator", "administrator"]:
         return
@@ -307,7 +307,6 @@ async def triggered(c: Client, m: Message):
             f"User {m.from_user.mention} detected without a name!!")
         return await sleep(3)
 
-    what = await check_string(str(user_has))
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
@@ -341,10 +340,10 @@ async def triggered(c: Client, m: Message):
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
-        LOGGER.info(f"Added {m.from_user.id} in db.")
+        LOGGER.info(f"Added {m.from_user.id} from {m.chat.id} in db.")
     else:
-        oo = rm_indb(int(m.chat.id), m.from_user.id)
-        LOGGER.info(f"Removed {m.from_user.id} from db - {oo}")
+        isor = rm_indb(int(m.chat.id), m.from_user.id)
+        LOGGER.info(f"Ok ! Removed - {isor}")
     return await sleep(3)
 
 

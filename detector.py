@@ -349,7 +349,7 @@ async def triggered(c: Client, m: Message):
     admin_tag += f"User {m.from_user.mention} is detected as a Unicode user !!"
     if what:
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
-        # REDIS.sadd(f"User_{m.chat.id}", int(m.from_user.id))
+        REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
     return await sleep(3)
 
 

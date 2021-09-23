@@ -152,6 +152,18 @@ async def check_string(string: str):
         return False
     else:
         return True
+    
+    
+def rm_indb(_id: int, user_id: str):
+    already_triggered = list(REDIS.sunion(f"User_{_id}"))
+    if already_triggered:
+        for a in already_triggered:
+            if a == user_id:
+                REDIS.srem(f"User_{_id}", user_id)
+                return True
+    else:
+        return False
+    return None
 
 
 @bot.on_callback_query(filters.regex("^action_"))
@@ -195,18 +207,12 @@ async def _buttons(c: Client, q: CallbackQuery):
             await q.answer("kicked Successfully !")
             await q.message.edit_text(editreport)
             await c.unban_chat_member(chat_id, user_id)
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
         except RPCError as err:
             await q.message.edit_text(
                 f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>")
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
     elif action == "ban":
         if "can_restrict_members" not in permissions:
@@ -217,17 +223,11 @@ async def _buttons(c: Client, q: CallbackQuery):
             await c.kick_chat_member(chat_id, user_id)
             await q.answer("Successfully Banned!")
             await q.message.edit_text(editreport)
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
     elif action == "mute":
         if "can_restrict_members" not in permissions:
@@ -253,17 +253,11 @@ async def _buttons(c: Client, q: CallbackQuery):
             )
             await q.answer("Muted !")
             await q.message.edit_text(editreport)
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-            if already_triggered and int(user_id) in already_triggered:
-                REDIS.srem(f"User_{chat_id}", int(user_id))
-                return
+            rm_indb(int(chat_id), str(user_id))
             return
     elif action == "oke":
         if "can_restrict_members" not in permissions:
@@ -275,10 +269,7 @@ async def _buttons(c: Client, q: CallbackQuery):
                            show_alert=True)
             return
         await q.message.edit_text(editreport)
-        already_triggered = list(REDIS.sunion(f"IS_USER_{chat_id}"))
-        if already_triggered and int(user_id) in already_triggered:
-            REDIS.srem(f"User_{chat_id}", int(user_id))
-            return
+        rm_indb(int(chat_id), str(user_id))
         return
     return
 
@@ -292,15 +283,10 @@ async def triggered(c: Client, m: Message):
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
     already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
-    LOGGER.info(f"{already_triggered}")
     if already_triggered:
         for a in already_triggered:
-            LOGGER.info(a)
             if a == str(m.from_user.id):
-                LOGGER.info("a")
                 return
-    else:
-        return
 
     user_has = ""
     try:

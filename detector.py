@@ -209,13 +209,11 @@ async def _buttons(c: Client, q: CallbackQuery):
             await q.answer("kicked Successfully !")
             await q.message.edit_text(editreport)
             await c.unban_chat_member(chat_id, user_id)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(
                 f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "ban":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -225,12 +223,10 @@ async def _buttons(c: Client, q: CallbackQuery):
             await c.kick_chat_member(chat_id, user_id)
             await q.answer("Successfully Banned!")
             await q.message.edit_text(editreport)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "mute":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -255,12 +251,10 @@ async def _buttons(c: Client, q: CallbackQuery):
             )
             await q.answer("Muted !")
             await q.message.edit_text(editreport)
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(f"Failed to Ban\n<b>Error:</b>\n`{err}`")
-            rm_indb(int(chat_id), user_id)
-            return
+            return rm_indb(int(chat_id), user_id)
     elif action == "oke":
         if "can_restrict_members" not in permissions:
             await q.answer("You don't have enough permissions.",
@@ -271,8 +265,7 @@ async def _buttons(c: Client, q: CallbackQuery):
                            show_alert=True)
             return
         await q.message.edit_text(editreport)
-        rm_indb(int(chat_id), user_id)
-        return
+        return rm_indb(int(chat_id), user_id)
     return
 
 

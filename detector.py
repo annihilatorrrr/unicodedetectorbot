@@ -156,14 +156,16 @@ async def check_string(string: str):
 
 def rm_indb(_id: int, user_id: str):
     already_triggered = list(REDIS.sunion(f"User_{_id}"))
+    LOGGER.info(f"rm_indb - {already_triggered}")
     if already_triggered:
         for a in already_triggered:
+            LOGGER.info(f"rm_indb - {a}")
             if a == user_id:
+                LOGGER.info("rm_indb")
                 REDIS.srem(f"User_{_id}", user_id)
                 return True
     else:
         return False
-    return None
 
 
 @bot.on_callback_query(filters.regex("^action_"))
@@ -283,9 +285,12 @@ async def triggered(c: Client, m: Message):
     if not bool(REDIS.get(f"Chat_{m.chat.id}")):
         return
     already_triggered = list(REDIS.sunion(f"User_{m.chat.id}"))
+    LOGGER.info(f"chk - {already_triggered}")
     if already_triggered:
         for a in already_triggered:
+            LOGGER.info(f"chk - {a}")
             if a == str(m.from_user.id):
+                LOGGER.info(f"chk")
                 return
 
     user_has = ""
@@ -341,7 +346,8 @@ async def triggered(c: Client, m: Message):
         await c.send_message(int(m.chat.id), admin_tag, reply_markup=keyboard)
         REDIS.sadd(f"User_{m.chat.id}", m.from_user.id)
     else:
-        rm_indb(int(m.chat.id), str(m.from_user.id))
+        oo = rm_indb(int(m.chat.id), str(m.from_user.id))
+        LOGGER.info(f"oo - {oo}")
     return await sleep(3)
 
 

@@ -282,6 +282,7 @@ async def triggered(c: Client, m: Message):
     if already_triggered:
         for a in already_triggered:
             if a == str(m.from_user.id):
+                LOGGER.info("User is in db.")
                 return
 
     user_has = ""

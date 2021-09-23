@@ -145,8 +145,6 @@ async def check_string(string: str):
     for a in string:
         if a in EMOJI:
             check4 = True
-        else:
-            check4 = None
     CHK = [check1, check2, check3, check4]
     if not any(CHK):
         return False
@@ -310,7 +308,7 @@ async def triggered(c: Client, m: Message):
         return await sleep(3)
 
     what = await check_string(str(user_has))
-    print(what)
+    LOGGER.info(what)
     if not what:
         rm_indb(int(m.chat.id), m.from_user.id)
     keyboard = InlineKeyboardMarkup([

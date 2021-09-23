@@ -160,9 +160,9 @@ def rm_indb(_id: int, user_):
         for a in already_triggered:
             if a == str(user_):
                 REDIS.srem(f"User_{_id}", user_)
-                return True
+                return "True"
     else:
-        return False
+        return "False"
 
 
 @bot.on_callback_query(filters.regex("^action_"))

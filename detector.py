@@ -152,8 +152,8 @@ async def check_string(string: str):
         return False
     else:
         return True
-    
-    
+
+
 def rm_indb(_id: int, user_id: str):
     already_triggered = list(REDIS.sunion(f"User_{_id}"))
     if already_triggered:

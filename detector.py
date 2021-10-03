@@ -3,6 +3,7 @@ from logging import INFO, basicConfig, getLogger
 from re import search
 from time import time
 
+from uvloop import install
 from emoji import UNICODE_EMOJI
 from pyrogram import Client, __version__, filters
 from pyrogram.errors import RPCError
@@ -18,7 +19,7 @@ from redis import StrictRedis
 from config import API_HASH, APP_ID, BOT_TOKEN, BOT_USERNAME, REDIS_URL
 
 print("Starting ...")
-
+install()
 basicConfig(
     format="%(asctime)s - [UNICODE-DETECTOR] - %(levelname)s - %(message)s",
     level=INFO,

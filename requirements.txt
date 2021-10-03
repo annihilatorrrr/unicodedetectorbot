@@ -2,3 +2,4 @@ redis
 emoji
 pyrogram
 tgcrypto
+uvloop

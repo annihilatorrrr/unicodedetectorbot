@@ -45,35 +45,34 @@ finally:
     LOGGER.info("Your redis server is alive!")
 
 
-@bot.on_message(
-    filters.command(["start", f"start@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(filters.command(["start", f"start@{BOT_USERNAME}"]) & ~filters.bot)
 async def start(_, m: Message):
     if m.chat.type != "private":
         return await m.reply_text("I'm alive!")
-    kb = InlineKeyboardMarkup([
+    kb = InlineKeyboardMarkup(
         [
-            InlineKeyboardButton(
-                text="Add me to your chat!",
-                url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
-            )
-        ],
-    ])
+            [
+                InlineKeyboardButton(
+                    text="Add me to your chat!",
+                    url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+                )
+            ],
+        ]
+    )
     return await m.reply_text(
         "Hi there! i'm the one who removes all unicode users from your chat, if you give me a chance!\nCheck /help and for support join @memerschatgroup",
         reply_markup=kb,
     )
 
 
-@bot.on_message(
-    filters.command(["help", f"help@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(filters.command(["help", f"help@{BOT_USERNAME}"]) & ~filters.bot)
 async def help_re(_, m: Message):
     return await m.reply_text(
         "Just add me to your chat with ban user permission and toggle /detector on | off !\nNote: for support join @memerschatgroup and this is not a final release !"
     )
 
 
-@bot.on_message(
-    filters.command(["ping", f"ping@{BOT_USERNAME}"]) & ~filters.bot)
+@bot.on_message(filters.command(["ping", f"ping@{BOT_USERNAME}"]) & ~filters.bot)
 async def ping(_, m: Message):
     starttime = time()
     reply = await m.reply_text("Pinging ...")
@@ -98,7 +97,8 @@ async def member_permissions(chat_id: int, user_id: int):
 
 
 @bot.on_message(
-    filters.command(["detector", f"detector@{BOT_USERNAME}"]) & ~filters.bot)
+    filters.command(["detector", f"detector@{BOT_USERNAME}"]) & ~filters.bot
+)
 async def power(_, m: Message):
     if m and not m.from_user:
         return
@@ -202,8 +202,7 @@ async def _buttons(c: Client, q: CallbackQuery):
     """
     if action == "kick":
         if "can_restrict_members" not in permissions:
-            await q.answer("You don't have enough permissions.",
-                           show_alert=True)
+            await q.answer("You don't have enough permissions.", show_alert=True)
             return
         try:
             await c.kick_chat_member(chat_id, user_id)
@@ -213,12 +212,12 @@ async def _buttons(c: Client, q: CallbackQuery):
             return rm_indb(int(chat_id), user_id)
         except RPCError as err:
             await q.message.edit_text(
-                f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>")
+                f"Failed to Kick\n<b>Error:</b>\n</code>{err}</code>"
+            )
             return rm_indb(int(chat_id), user_id)
     elif action == "ban":
         if "can_restrict_members" not in permissions:
-            await q.answer("You don't have enough permissions.",
-                           show_alert=True)
+            await q.answer("You don't have enough permissions.", show_alert=True)
             return
         try:
             await c.kick_chat_member(chat_id, user_id)
@@ -230,8 +229,7 @@ async def _buttons(c: Client, q: CallbackQuery):
             return rm_indb(int(chat_id), user_id)
     elif action == "mute":
         if "can_restrict_members" not in permissions:
-            await q.answer("You don't have enough permissions.",
-                           show_alert=True)
+            await q.answer("You don't have enough permissions.", show_alert=True)
             return
         try:
             await q.message.chat.restrict_member(
@@ -258,12 +256,10 @@ async def _buttons(c: Client, q: CallbackQuery):
             return rm_indb(int(chat_id), user_id)
     elif action == "oke":
         if "can_restrict_members" not in permissions:
-            await q.answer("You don't have enough permissions.",
-                           show_alert=True)
+            await q.answer("You don't have enough permissions.", show_alert=True)
             return
         if "can_delete_messages" not in permissions:
-            await q.answer("You don't have enough permissions.",
-                           show_alert=True)
+            await q.answer("You don't have enough permissions.", show_alert=True)
             return
         await q.message.edit_text(editreport)
         return rm_indb(int(chat_id), user_id)
@@ -304,34 +300,35 @@ async def triggered(c: Client, m: Message):
         return
     if not user_has:
         await c.send_message(
-            int(m.chat.id),
-            f"User {m.from_user.mention} detected without a name!!")
+            int(m.chat.id), f"User {m.from_user.mention} detected without a name!!"
+        )
         return await sleep(3)
 
-    keyboard = InlineKeyboardMarkup([
+    keyboard = InlineKeyboardMarkup(
         [
-            InlineKeyboardButton(
-                "Kick",
-                callback_data=f"action_=kick={m.from_user.id}",
-            ),
-            InlineKeyboardButton(
-                "Ban",
-                callback_data=f"action_=ban={m.from_user.id}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                "Mute",
-                callback_data=f"action_=mute={m.from_user.id}",
-            ),
-            InlineKeyboardButton(
-                "Solved !",
-                callback_data=f"action_=oke={m.from_user.id}",
-            ),
-        ],
-    ])
-    admin_data = await bot.get_chat_members(int(m.chat.id),
-                                            filter="administrators")
+            [
+                InlineKeyboardButton(
+                    "Kick",
+                    callback_data=f"action_=kick={m.from_user.id}",
+                ),
+                InlineKeyboardButton(
+                    "Ban",
+                    callback_data=f"action_=ban={m.from_user.id}",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Mute",
+                    callback_data=f"action_=mute={m.from_user.id}",
+                ),
+                InlineKeyboardButton(
+                    "Solved !",
+                    callback_data=f"action_=oke={m.from_user.id}",
+                ),
+            ],
+        ]
+    )
+    admin_data = await bot.get_chat_members(int(m.chat.id), filter="administrators")
     admin_tag = str()
     tag = "\u200b"
     for admin in admin_data:

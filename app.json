@@ -5,6 +5,7 @@
           "python3",
           "telegram",
           "bot",
+          "unicode-detector-bot",
           "telegram-bot",
           "pyrogram"
       ],

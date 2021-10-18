@@ -276,7 +276,7 @@ async def triggered(c: Client, m: Message):
         return
     if m and m.left_chat_member:
         return
-    if not bool(REDIS.get(f"Chat_{m.chat.id}")):
+    if REDIS.get(f"Chat_{m.chat.id}") == str("False"):
         return
     LOGGER.info("Checking ...")
     user_has = ""
